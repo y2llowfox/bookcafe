@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}통계{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-bar-chart"></i> 통계 대시보드</h2>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card text-bg-success">
+            <div class="card-body text-center">
+                <h6>오늘 매출</h6>
+                <h3>{{ '{:,}'.format(today_sales) }}원</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-primary">
+            <div class="card-body text-center">
+                <h6>이번 달 매출</h6>
+                <h3>{{ '{:,}'.format(month_sales) }}원</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-warning">
+            <div class="card-body text-center">
+                <h6>대출 중</h6>
+                <h3>{{ active_rentals }}건</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-danger">
+            <div class="card-body text-center">
+                <h6>연체</h6>
+                <h3>{{ overdue_count }}건</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">월별 매출 추이</div>
+            <div class="card-body">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">회원 등급 분포 (총 {{ total_members }}명)</div>
+            <div class="card-body">
+                <canvas id="memberChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">인기 도서 TOP 10</div>
+            <div class="list-group list-group-flush">
+                {% for title, cnt in popular_books %}
+                <div class="list-group-item d-flex justify-content-between">
+                    <span>{{ loop.index }}. {{ title }}</span>
+                    <span class="badge bg-primary">{{ cnt }}회</span>
+                </div>
+                {% else %}
+                <div class="list-group-item text-muted">데이터가 없습니다.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+new Chart(document.getElementById('salesChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ monthly_labels | tojson }},
+        datasets: [{
+            label: '매출 (원)',
+            data: {{ monthly_values | tojson }},
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: { scales: { y: { beginAtZero: true } } }
+});
+
+const mData = {{ membership_data | tojson }};
+new Chart(document.getElementById('memberChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['BASIC', 'SILVER', 'GOLD', 'VIP'],
+        datasets: [{
+            data: [mData['BASIC']||0, mData['SILVER']||0, mData['GOLD']||0, mData['VIP']||0],
+            backgroundColor: ['#6c757d', '#adb5bd', '#ffc107', '#dc3545']
+        }]
+    }
+});
+</script>
+{% endblock %}

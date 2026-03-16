@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}북카페 - 대시보드{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-house"></i> 대시보드</h2>
+
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="card text-bg-primary">
+            <div class="card-body">
+                <h6 class="card-title">전체 회원</h6>
+                <h2>{{ total_members }}명</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-success">
+            <div class="card-body">
+                <h6 class="card-title">보유 도서</h6>
+                <h2>{{ total_books }}권</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-warning">
+            <div class="card-body">
+                <h6 class="card-title">대출 중</h6>
+                <h2>{{ active_rentals }}건</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-danger">
+            <div class="card-body">
+                <h6 class="card-title">연체</h6>
+                <h2>{{ overdue_count }}건</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4 g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">빠른 메뉴</div>
+            <div class="list-group list-group-flush">
+                <a href="/members/create" class="list-group-item list-group-item-action"><i class="bi bi-person-plus"></i> 회원 등록</a>
+                <a href="/books/create" class="list-group-item list-group-item-action"><i class="bi bi-journal-plus"></i> 도서 등록</a>
+                <a href="/books/rental" class="list-group-item list-group-item-action"><i class="bi bi-arrow-left-right"></i> 대출 / 반납</a>
+                <a href="/sales" class="list-group-item list-group-item-action"><i class="bi bi-cash-stack"></i> 매출 등록</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">최근 대출</div>
+            <div class="list-group list-group-flush">
+                {% for r in recent_rentals %}
+                <div class="list-group-item d-flex justify-content-between">
+                    <span>{{ r.member.name }} - {{ r.book.title }}</span>
+                    <small class="text-muted">{{ r.rented_at.strftime('%m/%d') }}</small>
+                </div>
+                {% else %}
+                <div class="list-group-item text-muted">대출 내역이 없습니다.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

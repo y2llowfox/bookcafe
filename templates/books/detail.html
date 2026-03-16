@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }}{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-journal"></i> {{ book.title }}</h2>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">도서 정보</div>
+            <div class="card-body">
+                <table class="table mb-0">
+                    <tr><th style="width:100px">제목</th><td>{{ book.title }}</td></tr>
+                    <tr><th>저자</th><td>{{ book.author }}</td></tr>
+                    <tr><th>ISBN</th><td>{{ book.isbn or '-' }}</td></tr>
+                    <tr><th>분류</th><td>{{ book.category or '-' }}</td></tr>
+                    <tr><th>재고</th><td>{{ book.available_qty }} / {{ book.total_qty }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">현재 대출 현황</div>
+            <div class="list-group list-group-flush">
+                {% for r in active_rentals %}
+                <div class="list-group-item d-flex justify-content-between">
+                    <span>{{ r.member.name }}</span>
+                    <span>
+                        반납기한: {{ r.due_date.strftime('%m/%d') }}
+                        {% if r.is_overdue %}<span class="badge bg-danger">연체</span>{% endif %}
+                    </span>
+                </div>
+                {% else %}
+                <div class="list-group-item text-muted">대출 중인 회원이 없습니다.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="{{ url_for('books.list_books') }}" class="btn btn-outline-secondary mt-3">목록으로</a>
+{% endblock %}

@@ -1,0 +1,18 @@
+{
+  "name": "북카페 회원관리",
+  "short_name": "북카페",
+  "description": "북카페 회원관리 시스템",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#212529",
+  "theme_color": "#212529",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/static/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

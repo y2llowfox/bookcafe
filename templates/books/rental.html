@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}대출 / 반납{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-arrow-left-right"></i> 대출 / 반납</h2>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">도서 대출</div>
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" name="action" value="rent">
+                    <div class="mb-3">
+                        <label class="form-label">회원 선택</label>
+                        <select name="member_id" class="form-select" required>
+                            <option value="">-- 회원 선택 --</option>
+                            {% for m in members %}
+                            <option value="{{ m.id }}">{{ m.name }} ({{ m.phone }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">도서 선택</label>
+                        <select name="book_id" class="form-select" required>
+                            <option value="">-- 도서 선택 --</option>
+                            {% for b in books %}
+                            <option value="{{ b.id }}">{{ b.title }} (잔여: {{ b.available_qty }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-primary w-100">대출하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">현재 대출 목록 ({{ active_rentals|length }}건)</div>
+            <div class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                {% for r in active_rentals %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>{{ r.member.name }}</strong> - {{ r.book.title }}<br>
+                            <small class="text-muted">
+                                대출: {{ r.rented_at.strftime('%m/%d') }} |
+                                반납기한: {{ r.due_date.strftime('%m/%d') }}
+                                {% if r.is_overdue %}<span class="badge bg-danger">연체</span>{% endif %}
+                            </small>
+                        </div>
+                        <form method="post" class="ms-2">
+                            <input type="hidden" name="action" value="return">
+                            <input type="hidden" name="rental_id" value="{{ r.id }}">
+                            <button class="btn btn-sm btn-success">반납</button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="list-group-item text-muted">대출 중인 도서가 없습니다.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

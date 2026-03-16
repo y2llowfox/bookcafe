@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}회원 목록{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-people"></i> 회원 목록</h2>
+    <a href="{{ url_for('members.create') }}" class="btn btn-primary"><i class="bi bi-person-plus"></i> 회원 등록</a>
+</div>
+
+<form class="row g-2 mb-3" method="get">
+    <div class="col-md-4">
+        <input type="text" name="q" class="form-control" placeholder="이름 또는 전화번호 검색" value="{{ q }}">
+    </div>
+    <div class="col-md-3">
+        <select name="membership" class="form-select">
+            <option value="">전체 등급</option>
+            {% for m in ['BASIC','SILVER','GOLD','VIP'] %}
+            <option value="{{ m }}" {{ 'selected' if membership == m }}>{{ m }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-outline-secondary w-100">검색</button>
+    </div>
+</form>
+
+<table class="table table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>이름</th>
+            <th>전화번호</th>
+            <th>등급</th>
+            <th>포인트</th>
+            <th>가입일</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in members %}
+        <tr>
+            <td><a href="{{ url_for('members.detail', id=m.id) }}">{{ m.name }}</a></td>
+            <td>{{ m.phone }}</td>
+            <td><span class="badge bg-{{ 'warning' if m.membership == 'VIP' else 'info' if m.membership == 'GOLD' else 'secondary' }}">{{ m.membership }}</span></td>
+            <td>{{ "{:,}".format(m.points) }}P</td>
+            <td>{{ m.created_at.strftime('%Y-%m-%d') }}</td>
+            <td><a href="{{ url_for('members.detail', id=m.id) }}" class="btn btn-sm btn-outline-primary">상세</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted">등록된 회원이 없습니다.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
